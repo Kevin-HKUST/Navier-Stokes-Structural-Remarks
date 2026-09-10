@@ -1,5 +1,7 @@
 # Three structural remarks on a forced finite-time blowup construction for Navier–Stokes
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22695237.svg)](https://doi.org/10.5281/zenodo.22695237)
+
 Kaiyan Ren — Department of Computer Science and Engineering, The Hong Kong University of
 Science and Technology — <krenab@connect.ust.hk>
 
@@ -37,6 +39,33 @@ structural observations:
 | --- | --- |
 | `arXiv Note EN.pdf` | the note (14 pages, A4) |
 | `submission-note-en.tex` | source; compiles with XeLaTeX + `article` |
+| `arXiv Note EN.pdf.ots` | OpenTimestamps proof for the PDF |
+| `LICENSE` | CC BY 4.0 (covers this note only) |
+
+## Persistent identifiers
+
+| Identifier | Value |
+| --- | --- |
+| DOI — this version (v1) | [`10.5281/zenodo.22695237`](https://doi.org/10.5281/zenodo.22695237) |
+| DOI — concept (always the latest version) | [`10.5281/zenodo.22695236`](https://doi.org/10.5281/zenodo.22695236) |
+| OpenTimestamps proof | `arXiv Note EN.pdf.ots`; the PDF hash was submitted to the public calendars at the v1 release, and the proof is completable later with `ots upgrade` |
+| Software Heritage | archival requested at the v1 release; the SWHID will be listed here once the archive is available |
+
+Cite as:
+
+```bibtex
+@misc{ren_stokes_remarks,
+  author    = {Ren, Kaiyan},
+  title     = {Three structural remarks on a forced finite-time blowup construction for {N}avier--{S}tokes},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.22695237},
+  note      = {Preprint; not peer-reviewed}
+}
+```
+
+The DOI was minted by Zenodo from the GitHub release `v1`, so the archived snapshot and the
+publication date are the third-party record of this version; `git` commit dates alone are not.
 
 ## Reproducing the line numbers
 
