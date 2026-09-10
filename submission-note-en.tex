@@ -1,0 +1,1060 @@
+%% Three structural remarks on OpenAI's forced-blowup construction for Navier--Stokes (L0 scope) -- submission version (English)
+%% Packaged from review\branch-D-note-skeleton.tex (frozen working draft, 893 lines, four independent
+%% review rounds; targeted re-check r4 = CLEAR) and review\submission-note.tex (Chinese release draft).
+%% This English version only translates prose, English-izes theorem/tag names, and re-typesets with
+%% the standard article class. It changes NO mathematical assertion, NO line anchor, NO color-tag
+%% structure, and NO L0/L1/L2 discipline.
+%% Scope: L0 = a step of the device fails under its stated quantifiers, when the device is extended to
+%%       the setting (including the external limit point j0=0, which lies outside the source's domain).
+%%       L1 = no j0=0 variant within the class (H1)--(H3); valid only inside that class definition.
+%%       L2 (existence/nonexistence of reflection-symmetric blowup) is NOT touched; such statements do not appear.
+%% Line numbers: always refer to the reference text extraction navier-stokes.txt of the source PDF
+%%       (10264 lines; SHA-256 given in the reproducibility paragraph). That extraction is a full-text
+%%       copy of the source and is NOT redistributed with this note.
+%% Color code: [Source] = verbatim in the extracted text; [Derived] = rewriting of source formulas;
+%%       [Assumption] = an additional hypothesis or an unproven step.
+%% Compile target: XeLaTeX + article (also verified with Tectonic 0.17.0 XeTeX engine).
+%% This note is not peer-reviewed.
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+%% Do not hyphenate the source name.
+\hyphenation{OpenAI}
+
+%% Typesetting neatness: reduce occasional overfull boxes in math-heavy text and allow
+%% long displays to break across pages (they affect only non-fatal warnings otherwise).
+\setlength{\emergencystretch}{2em}
+\allowdisplaybreaks
+%% Bibliography set ragged-right: breakable URLs must not be stretched across a justified
+%% line (otherwise inter-letter spacing inside a URL becomes visible).
+\let\origthebibliography\thebibliography
+\renewcommand{\thebibliography}[1]{\origthebibliography{#1}\raggedright}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{claim}[theorem]{Claim}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\lnos}[1]{(lines~#1)}
+\newcommand{\ORIG}{\textcolor{blue}{\textbf{[Source]}}}
+\newcommand{\DER}{\textcolor{teal}{\textbf{[Derived]}}}
+\newcommand{\HYP}{\textcolor{orange}{\textbf{[Assumption]}}}
+%% Uniform statement for steps that are only sketched:
+\newcommand{\notproved}{\emph{This note does not prove this step; it is stated only as an observation
+and does not constitute a complete proof.}}
+
+\hypersetup{
+  pdftitle={Three structural remarks on a forced finite-time blowup construction for Navier--Stokes},
+  pdfauthor={Kaiyan Ren},
+  pdfsubject={Three structural observations on a forced Navier--Stokes blowup construction},
+  pdfkeywords={Navier--Stokes, forced finite-time blowup, five moments, terminal force, parity mechanism}
+}
+
+\title{Three structural remarks on a forced finite-time blowup construction for Navier--Stokes}
+\author{Kaiyan Ren\thanks{Department of Computer Science and Engineering,
+The Hong Kong University of Science and Technology, Hong Kong SAR, China.
+\texttt{krenab@connect.ust.hk}}}
+\date{September 10, 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Under the standing assumption that the forced finite-time blowup construction of \mbox{OpenAI} for the
+three-dimensional incompressible Navier--Stokes equations is correct as claimed, we record three
+structural observations:
+(i) in a fixed background the source's $O(N^{-1})$ bound for the five-moment increment is non-sharp,
+the cumulative increment over the full modulation interval being $O(N^{-2})$;
+(ii) the terminal force $F_0$ is rigidly equivalent to the truncated-shell commutator;
+(iii) at $j_0=0$ a parity mechanism degenerates the endpoint cone test (B.19) of [S], and this
+degeneration cannot be avoided within the class (analytic axis profile, vanishing leading residual stress
+$T_0=0$, stress activated at $X_0$, the same cone test) (in-class rigidity; see Note 3 below).
+Statements that a step fails are of level L0; the in-class rigidity holds only within its class
+definition. We make no claim about the existence or nonexistence of reflection-symmetric forced blowup,
+and we claim no new Navier--Stokes solution.
+\end{abstract}
+
+\tableofcontents
+
+%% =====================================================================
+\section{Introduction and scope}
+\label{sec:intro}
+
+\paragraph{The OpenAI construction (one paragraph).}
+\ORIG
+For every positive viscosity the paper constructs, from rest, a three-dimensional incompressible
+Navier--Stokes solution with uniformly bounded kinetic energy and velocity unbounded in finite time,
+driven by a smooth compactly supported force
+\lnos{1--6,801--832}; the local field is given by Theorem~3.1 of [S]
+(potential decomposition \eqref{eq:33}, flat residual \eqref{eq:34}, exterior heat profile \eqref{eq:35},
+axis growth \eqref{eq:36})
+\lnos{745--799};
+after spatial--temporal truncation the field is localized to a compact set $K$, and the residual is
+extended to a $C^\infty_c$ force (Prop.~10.1 and Lemma~10.2--10.3 of [S]) \lnos{7229--7386}.
+The axis construction takes a small bias $0<j_0\le .05$ and $U^*=4\eta+j_0$
+(\eqref{eq:B1}, \lnos{9002--9005});
+the introduction presents this bias as a deliberate breaking of the $z\mapsto -z$ reflection symmetry
+\lnos{184--190}.
+The parameter order chooses $j_0$ before $\Lambda$ (\eqref{eq:B40}).
+
+\paragraph{Scope of this note.}
+\HYP
+Throughout, we read the source formulas, quantifiers and parameter order under the hypothesis that the
+construction is correct as claimed: we assume Theorem~3.1, the axis profile and endpoint test of
+Appendix~B of [S], and the modulation--five-moment repair of \S4 Steps 2--3 hold as stated, and we then
+make three observations about their internal structure.
+This note does not re-prove the existence of the construction, does not connect the finite-dimensional
+moment maps to the full fluid field, and claims no new Navier--Stokes solution or regularity criterion.
+
+\paragraph{Scope discipline (L0).}
+\DER
+Outward statements use level L0 only:
+\emph{when the device is extended to the stated setting (including the external limit point $j_0=0$,
+which lies outside the source's domain, the source allowing only $0<j_0\le.05$ \lnos{9002}),
+a step fails under the device's own quantifiers.}
+The statement that there is no $j_0=0$ variant within one function class (L1) has been recorded as
+Prop.~\ref{prop:L1} (the class definition (H1)--(H3) is part of its hypotheses);
+the existence or nonexistence of reflection-symmetric forced blowup (L2) is not touched by this note,
+and no such statement appears below.
+The first cone inequality $a-b_s w>0$ ($w=N_s/(EQ_s)$\lnos{8323}) and the second cone test $v_s>2$
+are kept separate and are not conflated into one ``cone''.
+
+\paragraph{Color code and line references.}
+\ORIG is verbatim readable in \texttt{navier-stokes.txt};
+\DER is a rewriting of source formulas under the stated setting;
+\HYP is an additional hypothesis or an unproven step.
+Every assertion carries line numbers. The internal working record used during the writing (not
+distributed) contains no independent five-moment $M$ formula or closed form of $F_0$;
+the formulas of Notes 1 and 2 are rewritten from the cited source lines.
+Paragraphs of that record marked as superseded (SUPERSEDED) are not cited at all.
+
+\paragraph{Notation, line references and reproducibility.}
+Every \lnos{xxx} refers to line numbers of the reference text extraction \nolinkurl{navier-stokes.txt}
+of the source PDF (\cite{source}): a plain-text extraction with 10264 lines, 507\,517 bytes, each page
+separated by a marker of the form \nolinkurl{=== PAGE n ===} (165 page markers in all) and no ASCII
+form-feed characters, with SHA-256
+\begin{center}
+\texttt{76a236df4f12ab2261f07047ae56a1dcc320b515c55c82653fea48942b10d674.}
+\end{center}
+The extraction was based on \texttt{pdftotext}; the version is unknown (the existing extraction carries
+no version metadata), and the page-marker format is not the \texttt{pdftotext} default (which paginates
+with form feeds), so a fresh \texttt{pdftotext} run will not reproduce this file byte for byte.
+Being a full-text copy of \cite{source}, the extraction is not redistributed with this note; the
+fingerprint above identifies it unambiguously, and the author will supply it on request.
+A reader working from the source PDF directly can still locate almost every \ORIG statement without it,
+because this note prints the source's own tags next to the line anchors: equation numbers such as
+(B.19) or (10.9), statement numbers such as Prop.~B.3 of [S], and, for the extraction, the page markers.
+
+\paragraph{Numbering and citation convention.}
+The theorem-like environments of this note (Theorem/Lemma/Proposition/Corollary/Definition/Claim/Remark)
+are numbered consecutively by ``section.counter'' and displayed formulas by $(1),(2),\dots$.
+All numbers that refer to the source paper are written with ``of [S]''
+(Theorem~3.1 of [S], Prop.~B.3 of [S], Lemma~B.4 of [S], Cor.~B.6 of [S], Theorem~4.6(iii) of [S], etc.)
+to avoid confusion with the numbering of this note. Parenthesized numbers carrying an appendix letter
+or a section/paragraph, such as (B.19), (B.26), (10.9), (A.24), always refer to the source formulas;
+where this note re-typesets a source formula it uses its own number and states the source's tag and
+line numbers immediately adjacent.
+
+\paragraph{Status of proofs.}
+This note records three structural observations; it is not a research paper giving complete proofs.
+Prop.~\ref{prop:osc}--\ref{prop:V}, \ref{prop:shell}--\ref{prop:rigid},
+\ref{prop:p2zero}--\ref{prop:B19deg} give only argument sketches: every proof block headed
+``Argument sketch'' ends with the explicit statement ``This note does not prove this step; it is stated
+only as an observation and does not constitute a complete proof.''
+Propositions without a proof block (\ref{prop:rigid}, \ref{prop:p1}, \ref{prop:B19deg}) have their
+derivation in the steps listed in their statements, likewise not constituting a complete proof.
+The argument of Prop.~\ref{prop:L1} is its items 1--3, which depend on the sketch-only propositions
+above, and is valid only within the class definition (H1)--(H3).
+Steps tagged \HYP are unproven and must not be used as established conclusions;
+the evidence level is read off the color code: \ORIG is checkable verbatim against the extracted text,
+\DER is a rewriting of source formulas, \HYP is unproven.
+
+%% ---------------------------------------------------------------------
+\subsection*{Notation: source coordinates and symbols}
+\label{sec:notation}
+
+\ORIG
+Similarity coordinates and weights \lnos{1343--1350}:
+\begin{equation}
+\label{eq:41}
+\begin{aligned}
+\tau&=1-t,\quad
+A=\tfrac12+h,\quad
+D=\tfrac12-h,\quad
+0<h<\tfrac12,\\
+z&=q^D\eta,\quad
+\tau=q(1-\eta^2),\quad
+d=1-\eta^2,\quad
+L=1-2h\eta^2,\quad
+s=r^2/2,\quad
+X=s/q.
+\end{aligned}
+\end{equation}
+Hence at $\eta=0$ one has $d=L=1$.
+Profiles \lnos{1374--1378}:
+\begin{equation}
+\label{eq:43}
+u^{(0)}_\theta=q^{-A}E,\quad
+u^{(0)}_z=q^{-A}U,\quad
+r u^{(0)}_r=V_0,\quad
+p^{(0)}=q^{-2A}\Pi,\quad
+E=C^{-1}\sqrt{2X}\,\varphi.
+\end{equation}
+Stress coefficients \lnos{1488--1496}:
+\begin{equation}
+\label{eq:411}
+p_s=\Bigl(\frac{XQ_s}{L},\frac{XN_s}{LE}\Bigr),\quad
+s=(a,-b_s),\quad
+a=1-2D_X\log E,\quad
+b_s=\frac{2D_X U}{E}.
+\end{equation}
+First cone direction $w=N_s/(EQ_s)$\lnos{8323}; the first cone inequality $a-b_s w>0$
+(the sufficient test of Lemma~4.5 of [S] and (A.24)\lnos{1778,8324--8325}).
+Below, $p_1=p_{s,1}$, $p_2=p_{s,2}$. The shear $v_s=a(1+t_s^2)=a+b_s^2/a$\lnos{1748--1751};
+in the axis region and the reference profile, where $T_0=0$ (i.e.\ $p_s=s$),
+$v_s=p_1+p_2^2/p_1$ (for $p_1>0$; the $p$-form appears in \lnos{9385--9389}).
+
+%% =====================================================================
+\section{Note 1: non-sharpness of the \texorpdfstring{$O(N^{-1})$}{O(N\textasciicircum -1)} five-moment bound}
+\label{sec:note1}
+
+\subsection{Source statements}
+\label{sec:note1-orig}
+
+\ORIG
+The zero-mean primitives $A,B$ of the periodic shear satisfy \lnos{2390--2401}
+\begin{equation}
+\label{eq:AB}
+\partial_\varphi A=-\tfrac12(a_L-a_0),\qquad
+\partial_\varphi B=\tfrac12 E_0(b_L-b_0),\qquad
+\int_0^1 A\,d\varphi=\int_0^1 B\,d\varphi=0,
+\end{equation}
+and vanish near the two ends of $I=[X_-,X_+]$, where the loop is constant, with zero extension off $I$.
+The modulation \lnos{2402--2408}:
+\begin{equation}
+\label{eq:438}
+E_N=E_0\exp\Bigl(\frac{A(X,\eta,N\log X)}{N}\Bigr),\qquad
+U_N=U_0+\frac{B(X,\eta,N\log X)}{N}.
+\end{equation}
+Pointwise and shear bounds \lnos{2421--2426}:
+\begin{equation}
+\label{eq:439}
+\|U_N-U_0,\,E_N-E_0\|_k\le A_k/N,\qquad
+\|a_N-a_L,\,b_N-b_L\|_k\le B_k/N.
+\end{equation}
+The exact integral of the five-moment increment (fixed interval away from zero) \lnos{2428--2448}:
+put $u_N=U_N-U_0$, $e_N=E_N-E_0$, $\Delta m_N=m_N-m_0$,
+\begin{equation}
+\label{eq:Dm}
+\Delta m_N(X,\eta)
+=\int_{X_-}^{X}
+\begin{pmatrix}
+u_N \\
+\sqrt{2x}\,e_N \\
+H_0 u_N+U_0\sqrt{2x}\,e_N+\sqrt{2x}\,u_N e_N \\
+2U_0 u_N+u_N^2-E_0 e_N-e_N^2/2 \\
+E_0 e_N/x+e_N^2/(2x)
+\end{pmatrix}
+dx.
+\end{equation}
+The product rule and \eqref{eq:439} give \lnos{2449--2452}
+\begin{equation}
+\label{eq:Dm-orig}
+\|\Delta m_N\|_k\le D_k/N,\qquad
+\|\Pi_N-\Pi_0^{\mathrm{prof}}\|_k=\|\Delta C_{p,N}\|_k\le D_k/N.
+\end{equation}
+Then take $d_N=-\Delta m_N(Y_1,\eta)$, arranged as $(M,J,I,S,C_p)$ \lnos{2497--2511}:
+\begin{equation}
+\label{eq:442}
+B(\eta)c+Q_\eta(c,c)=d_N(\eta).
+\end{equation}
+and require $N\ge 8\max_{k=0,2}\nu_k^2 q_k D_k$
+so that $\|c\|_{C^2}\le 2\nu_2 D_2/N$\lnos{2546--2552}.
+
+\begin{remark}[Ordering of rows]
+\ORIG
+The five integrands of \eqref{eq:Dm} are arranged as $(M,I,J,S,C_p)$;
+the target vector of \eqref{eq:442} is arranged as $(M,J,I,S,C_p)$\lnos{2497--2511}.
+The two orderings must not be mixed when citing.
+\end{remark}
+
+\subsection{Non-sharpness: cumulative moments improve to \texorpdfstring{$O(N^{-2})$}{O(N\textasciicircum -2)}}
+\label{sec:note1-der}
+
+\begin{proposition}[Oscillatory-integral boundary term of order $O(N^{-1})$]
+\label{prop:osc}
+\DER
+Let $[a,b]\subset(0,\infty)$ be fixed, let $P(X,\eta,\varphi)$ be smooth, $1$-periodic in $\varphi$ with
+zero mean, and let $Q$ be its periodic primitive ($\partial_\varphi Q=P$). The phase $\varphi=N\log X$
+is independent of $\eta$ \lnos{2409--2410,2421}. Then
+\begin{equation}
+\label{eq:ibp}
+P(X,\eta,N\log X)
+=\frac{X}{N}\Bigl(\partial_X Q(X,\eta,N\log X)-Q_X(X,\eta,N\log X)\Bigr),
+\end{equation}
+so that for a smooth weight $g$ on a fixed interval,
+\[
+\int_a^x g P_N\,dX
+=\frac{[Xg Q_N]_a^x}{N}
+-\int_a^x\frac{(Xg)'Q_N+Xg(Q_X)_N}{N}\,dX
+\]
+is $O(N^{-1})$ uniformly in $x$. The same holds for any fixed finite order of $\eta$-derivatives
+(constants may depend on the fixed background, the interval and the order of differentiation).
+\end{proposition}
+
+\begin{proof}[Argument sketch]
+The chain rule gives \eqref{eq:ibp}; the integration by parts is standard.
+The complete $C^k_\eta$ estimate (only derivative bounds on a compact parameter set are needed) is not
+written out in this note.
+\notproved
+\end{proof}
+
+\begin{proposition}[Cumulative five moments $O(N^{-2})$]
+\label{prop:N2}
+\DER
+In a fixed background $(U_0,E_0)$ and fixed $k$, put $u_N=B_N/N$ and
+$e_N=E_0\bigl(\exp(A_N/N)-1\bigr)$. From \eqref{eq:AB} and \eqref{eq:438},
+\begin{equation}
+\label{eq:e-exp}
+e_N=E_0\frac{A_N}{N}+O_{C^k_\eta}(N^{-2}).
+\end{equation}
+All linear increments in \eqref{eq:Dm} are $N^{-1}$ times zero-mean oscillatory integrals;
+the remaining terms are quadratic or higher. Hence uniformly on $J=[X_-,Y_1]$,
+\begin{equation}
+\label{eq:N2}
+\sup_X\|\Delta m_N(X,\cdot)\|_{C^k_\eta}\le C_k N^{-2}.
+\end{equation}
+Thus the source's $O(N^{-1})$ bound \eqref{eq:Dm-orig} is non-sharp for the \emph{cumulative} five moments.
+\end{proposition}
+
+\begin{proof}[Argument sketch]
+Substitute \eqref{eq:e-exp} into \eqref{eq:Dm}. Linear terms use Prop.~\ref{prop:osc};
+quadratic terms are already $O(N^{-2})$. The functions $A,B$ vanish near the ends of $I$\lnos{2401},
+so the boundary terms are compatible with the choice of interval.
+The explicit componentwise constants $C_k$ are not given in this note.
+\notproved
+\end{proof}
+
+\begin{proposition}[Second-order leading term $V$ on the full interval]
+\label{prop:V}
+\DER
+Because the oscillatory functions vanish near the ends, a smooth zero-mean linear term can be integrated
+by parts repeatedly, and the full-interval integral decays super-algebraically at any fixed order.
+Let $\langle\,\cdot\,\rangle$ denote the $\varphi$-average and integrate over $I$. Arranged as
+$(M,I,J,S,C_p)$, in $C^k_\eta$ for a fixed background,
+\[
+N^2\Delta m_N(Y_1,\eta)\to V(\eta),
+\]
+\begin{equation}
+\label{eq:V}
+\begin{aligned}
+V_M&=0,\\
+V_I&=\int\sqrt{2X}\,E_0\,\frac{\langle A^2\rangle}{2}\,dX,\\
+V_J&=\int\sqrt{2X}\,E_0\,U_0\frac{\langle A^2\rangle}{2}\,dX\\
+&\qquad+\int\sqrt{2X}\,E_0\,\langle AB\rangle\,dX,\\
+V_S&=\int\bigl(\langle B^2\rangle-E_0^2\langle A^2\rangle\bigr)\,dX,\\
+V_{C_p}&=\int\frac{E_0^2\langle A^2\rangle}{X}\,dX.
+\end{aligned}
+\end{equation}
+In particular: if $A\not\equiv 0$ for some $\eta$, then $V_{C_p}>0$;
+if $A\equiv 0$ but $B\not\equiv 0$, then $V_S=\int\langle B^2\rangle>0$.
+For a nontrivial modulation the five-moment vector generally has a genuine second-order mean error,
+so that $O(N^{-2})$ is sharp as a vector bound for generic modulations.
+\end{proposition}
+
+\begin{proof}[Argument sketch]
+Expand the exponential to second order; the cubic remainder integrates to $O(N^{-3})$;
+the quadratic terms split into a periodic mean and a zero-mean part, the latter integrated by parts again.
+\emph{Only on the full interval can the linear terms be made super-algebraically small; a partial
+cumulative (moving endpoint) carries boundary terms and cannot use $V$ as is.}
+\notproved
+\end{proof}
+
+\subsection{What the improvement does not cover}
+\label{sec:note1-limit}
+
+\begin{claim}
+\label{cl:not-pointwise}
+\DER
+Prop.~\ref{prop:N2} improves the integrated quantity, not the pointwise profile bound $O(N^{-1})$
+or the shear error $O(N^{-1})$ of \eqref{eq:439}. Subsequent changes of $p$ may still contain the
+contribution of the profile itself and cannot all be replaced by $O(N^{-2})$.
+\end{claim}
+
+\begin{claim}
+\label{cl:not-uniform}
+\HYP
+If the normalization constants are also controlled, one may write $|d_2-d_1|\le C_k(\lambda)N^{-2}$.
+For fixed $\lambda$ and $N$ large enough this is indeed smaller than $\lambda/N$.
+This is not a two-parameter uniform statement. From this upper bound one may not conclude that
+``only $\lambda N\gtrsim 1$ suffices'', nor take the scaling $N\sim\lambda^{-2}$ suggested by
+$\nu_k=O(\lambda^{-1})$ as an established asymptotics of the full construction
+(the source fixes $\lambda$ before increasing $N$\lnos{2323--2326,2542--2545}).
+\notproved
+\end{claim}
+
+\begin{remark}[The $\lambda$-factor in a normal combination: observation only]
+\HYP
+For fixed constants $G,c_0$, the second-order leading term of the combination
+$\Delta J-G\Delta I-c_0\Delta M$ is
+\[
+\int\sqrt{2X}\,E_0\Bigl((U_0-G)\frac{\langle A^2\rangle}{2}+\langle AB\rangle\Bigr)\,dX.
+\]
+Whether this expression contains a structural $\lambda$-factor is not proven. The source's repair target
+is $-\Delta m$, of opposite sign.
+\notproved
+\end{remark}
+
+%% =====================================================================
+\section{Note 2: the terminal shell force \texorpdfstring{$F_0$}{F\_0}, explicit formula and rigid equivalence}
+\label{sec:note2}
+
+\subsection{Localization and the definition of the force}
+\label{sec:note2-loc}
+
+\ORIG
+Potential decomposition and exterior heat profile of Theorem~3.1 of [S] \lnos{745--790}:
+\begin{equation}
+\label{eq:33}
+u=\operatorname{curl} A+B e_\theta,
+\end{equation}
+\begin{equation}
+\label{eq:34}
+\bigl|\partial_x^\alpha\partial_t^b R(u,p)\bigr|
+\le C_{\alpha,b,N,X_1} q^N
+\qquad(0\le X\le X_1,\;q\downarrow 0),
+\end{equation}
+\begin{equation}
+\label{eq:35}
+X\ge X_{\mathrm{ext}}\ \Rightarrow\
+A=0,\quad
+B=K(r,\tau),\quad
+p=-\int_r^\infty\frac{K(\rho,\tau)^2}{\rho}\,d\rho,\quad
+K(r,\tau)=r^{-1-2h}H_{\mathrm{ext}}(\tau/r^2).
+\end{equation}
+Axis growth \lnos{791--799}:
+\begin{equation}
+\label{eq:36}
+u_\theta\bigl(\sqrt{2X_{\mathrm{in}}\tau},\,0,\,0,\,1-\tau\bigr)
+=\tau^{-A}\bigl(e_0+O(\tau^{2h})\bigr)\qquad(\tau\downarrow 0).
+\end{equation}
+
+\ORIG
+Localization of \S3.5 of [S] \lnos{801--832}: take $c=\chi_x\chi_t$,
+with $\chi_x$ axisymmetric and supported in the compact set $K$, equal to $1$ near $(0,1)$,
+and $\chi_t$ vanishing on $[0,1-\tau_0]$ and equal to $1$ where $1-t\le\tau_0/2$.
+\begin{equation}
+\label{eq:loc}
+u=\operatorname{curl}(cA)+c B e_\theta
+=c\,u_{\mathrm{loc}}+\nabla c\times A,\qquad
+p=c\,p_{\mathrm{loc}}.
+\end{equation}
+For $t<1$ put $f=R(u,p)$. The difference $f-c R(u_{\mathrm{loc}},p_{\mathrm{loc}})$ contains
+$(\partial_t c-\Delta c)u_{\mathrm{loc}}$, $p_{\mathrm{loc}}\nabla c$,
+derivatives and advection of $\nabla c\times A$, and $(c^2-c)(u_{\mathrm{loc}}\cdot\nabla)u_{\mathrm{loc}}$,
+supported in the truncation transition region, away from a neighborhood of $(0,1)$\lnos{815--819}.
+
+\ORIG
+Prop.~10.1 of [S] \lnos{7229--7258}: there is a compact set $K\subset\R^3$ such that
+$\operatorname{div} u=0$, $u(\cdot,t)=p(\cdot,t)=0$ for sufficiently small $t\ge 0$, and
+$(u,p)$ agrees with $(u_{\mathrm{loc}},p_{\mathrm{loc}})$ in a spatial neighborhood of the origin for $t$
+sufficiently close to $1$. Definition of the force \lnos{7259--7260}:
+\begin{equation}
+\label{eq:105}
+f=R(u,p)=\partial_t u+(u\cdot\nabla)u-\Delta u+\nabla p\qquad(0\le t<1).
+\end{equation}
+
+\subsection{The terminal value \texorpdfstring{$F_0$}{F\_0} and the shell formula}
+\label{sec:note2-formula}
+
+\ORIG
+Lemma~10.2 of [S] \lnos{7275--7287}: for every spatial multi-index $\alpha$ and integer $j\ge 0$,
+$\partial_x^\alpha\partial_t^j f$ converges uniformly on $\R^3$ as $t\uparrow 1$.
+There exist $F_j\in C^\infty_c(\R^3;\R^3)$, all supported in $K$, such that
+\begin{equation}
+\label{eq:106}
+\lim_{t\uparrow 1}\partial_x^\alpha\partial_t^j f(x,t)
+=\partial_x^\alpha F_j(x),\qquad
+\partial_x^\alpha F_j(0)=0.
+\end{equation}
+Below we write
+\begin{equation}
+\label{eq:F0}
+F_0:=F_{j=0}=\lim_{t\uparrow 1}f(\cdot,t)\in C^\infty_c(K;\R^3).
+\end{equation}
+
+\ORIG
+Exterior heat profile \lnos{7312--7324}: where $r$ is bounded below and $q$ is sufficiently small
+(so that $X\ge X_{\mathrm{ext}}$),
+\begin{equation}
+\label{eq:107}
+K(r,\tau)=c_\infty s^{-A}H(2\tau/s),\qquad s=r^2/2,
+\end{equation}
+with $H_{\mathrm{ext}}(Z)=2^A c_\infty H(4Z)$. For every $j$,
+\begin{equation}
+\label{eq:108}
+\bigl|\partial_\tau^j K(r,\tau)\bigr|\le C_j r^{-1-2h-2j},\qquad
+\Bigl|\partial_\tau^j\frac{K(\rho,\tau)^2}{\rho}\Bigr|\le C_j\rho^{-3-4h-2j}.
+\end{equation}
+The untruncated exterior residual vanishes identically\lnos{7343--7344}.
+
+\ORIG
+Near the origin the truncation equals $1$. We use \eqref{eq:34} on $X\le X_{\mathrm{ext}}$,
+and the residual vanishes identically for larger $X$; so for every $\alpha,j,N$, on a fixed
+neighborhood of $(0,1)$ \lnos{7349--7356}
+\begin{equation}
+\label{eq:109}
+\bigl|\partial_x^\alpha\partial_t^j f(x,t)\bigr|
+\le C_{\alpha,j,N}\bigl(\tau+|z|^{1/D}\bigr)^N.
+\end{equation}
+Hence $F_0$ vanishes to infinite order at the origin.
+
+\begin{proposition}[Shell-commutator representation]
+\label{prop:shell}
+\DER
+Take $t$ sufficiently close to $1$ so that $\chi_t\equiv 1$ (i.e.\ $1-t\le\tau_0/2$\lnos{804,7248--7249});
+then $c=\chi_x$. Hence
+\begin{equation}
+\label{eq:F0-c}
+F_0(x)
+=\lim_{t\uparrow 1}
+R\bigl(\operatorname{curl}(\chi_x A)+\chi_x B e_\theta,\,\chi_x p_{\mathrm{loc}}\bigr).
+\end{equation}
+Split by support:
+\begin{enumerate}
+\item \emph{The kernel} (the neighborhood where $\chi_x\equiv 1$): $F_0$ is the terminal value of the
+local residual, flat (zero to infinite order) at $0$ by \eqref{eq:109}.
+\item \emph{The untruncated exterior} ($X\ge X_{\mathrm{ext}}$ with $\chi_x\equiv 1$):
+the untruncated residual vanishes identically\lnos{7343--7344}, so $F_0=0$.
+\item \emph{The truncation shell} $\operatorname{supp}|D\chi_x|$
+(which may meet the time-truncation transition where $q$ is bounded below\lnos{821--825}):
+$F_0$ equals the terminal value of $f-c R(u_{\mathrm{loc}},p_{\mathrm{loc}})$, i.e.\ the commutator
+listed in [S]\lnos{815--818}.
+On the exterior shell, where $A=0$, this commutator involves only the terminal heat flow $K(\cdot,0)$,
+the terminal pressure integral and the fixed cutoff $\chi_x$; its $\tau$-derivative bounds are controlled
+by \eqref{eq:108}.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}[Argument sketch]
+For $\chi_t\equiv 1$, \eqref{eq:loc} and \eqref{eq:105} give \eqref{eq:F0-c}.
+The three-way split follows from the definition of $\chi_x$\lnos{7246--7247}, the flatness
+\eqref{eq:109} and the vanishing exterior residual \lnos{7343--7344}.
+The componentwise Cartesian expansion of the commutator (including the vanishing of
+$\nabla\chi_x\times A$ when $A=0$) is not written out in this note.
+\notproved
+\end{proof}
+
+\begin{remark}[Time extension is not the shortest transient]
+\ORIG
+Lemma~10.3 of [S] \lnos{7384--7395} uses an order-shrinking time truncation to realize
+\begin{equation}
+\label{eq:1011}
+f(x,1+\sigma)=\sum_{j=0}^\infty\chi_0(b_j\sigma)\frac{\sigma^j}{j!}F_j(x),
+\end{equation}
+supported in $K\times[0,2]$.
+\DER
+This gives the existence of a smooth compactly supported force, not the shortest switching transient.
+\HYP
+Whether shrinking the $\chi_t$ transition width breaks the derivative compatibility of \eqref{eq:106}
+currently has no anchor.
+\notproved
+\end{remark}
+
+\subsection{Rigid equivalence}
+\label{sec:note2-rigid}
+
+\begin{proposition}[Rigid equivalence with the shell data]
+\label{prop:rigid}
+\DER
+Under the truncation $c=\chi_x\chi_t$ and the local field as in Theorem~3.1 of [S], the following
+three data determine one another (rigid equivalence):
+\begin{enumerate}
+\item the terminal force $F_0=\lim_{t\uparrow 1}f$;
+\item the full family of Taylor coefficients $\{F_j\}_{j\ge 0}$ of Lemma~10.2 of [S]
+(via the time compatibility \eqref{eq:1010});
+\item the terminal value of the commutator on the truncation shell
+(flat-zero kernel $+$ zero untruncated exterior residual $+$ shell commutator).
+\end{enumerate}
+The equivalence does not depend on non-flat velocity details of the axis kernel: \eqref{eq:109}
+suppresses derivatives of every order near the origin.
+\end{proposition}
+
+\ORIG
+Time compatibility \lnos{7367--7378}:
+\begin{equation}
+\label{eq:1010}
+\partial_x^\alpha\partial_t^j f(x,t)
+=\partial_x^\alpha F_j(x)
+-\int_t^1\partial_x^\alpha\partial_t^{j+1}f(x,s)\,ds.
+\end{equation}
+
+\begin{claim}[Whether $F_0$ encodes $j_0$: the exterior factor carries no bias; the fingerprint question is open]
+\label{cl:F0-j0}
+\DER
+The bias $j_0$ appears in the axis velocity $U^*=4\eta+j_0$\lnos{9003--9004},
+and does not appear in the exterior heat-flow factor of the shell commutator \eqref{eq:F0-c}.
+Flatness \eqref{eq:109} suppresses the contribution of the kernel velocity to $F_0$ at the origin to
+infinite order\lnos{7349--7356}.
+\HYP
+``$F_0$ cannot by itself serve as a fingerprint of a symmetric/asymmetric variant'' \emph{does not}
+follow from the above facts: (10.9) suppresses only a neighborhood of the origin; the kernel region
+$X<X_{\mathrm{ext}}$ inside $K=\operatorname{supp}\chi_x$\lnos{7244--7247} has positive measure, and the
+source states only that the residual vanishes identically for $X\ge X_{\mathrm{ext}}$\lnos{779}; the
+dependence of the terminal residual in that kernel on $j_0$ is not addressed, so the fingerprint question
+is open.
+To distinguish variants by the terminal field one would need additional normalized observables on
+$C_\tau$ (e.g.\ the axis value $U(0,0)$, the $e_0$ of \eqref{eq:36}, or $E(X_*,0)$ at $\eta=0$), and a
+proof that the high-frequency corrections of \S5 and \S9 of [S] do not erase that observable. This step
+is not done.
+\notproved
+\end{claim}
+
+\begin{remark}[Interior points in a bounded domain]
+\ORIG
+Placing the localized $F_0$ in a bounded smooth domain with $0$ in the interior is the trivial
+restriction of Prop.~10.1 of [S]\lnos{7229--7232}: the domain need only contain $K$.
+This note does not regard that restriction as a nontrivial boundary blowup.
+\end{remark}
+
+%% =====================================================================
+\section{Note 3: the load-bearing role of the bias \texorpdfstring{$j_0$}{j\_0} --- a parity mechanism}
+\label{sec:note3}
+
+\subsection{Setup and the source endpoint test}
+\label{sec:note3-setup}
+
+This section fixes \HYP (the same test point as the second review round):
+$j_0=0$, $U^*=4\eta$, endpoint $(X,\eta)=(4/\Lambda,0)$, $Y=\Lambda X=4$.
+
+\ORIG
+Axis data \lnos{8998--9009}:
+\begin{equation}
+\label{eq:B1}
+U^*=4\eta+j_0,\qquad
+H^*=D\eta+d U^*,\qquad
+W^*=1-d U^*_\eta-2D\eta U^*,
+\end{equation}
+with
+\[
+-W^*=3-8h\eta^2+(1-2h)j_0\eta.
+\]
+\DER
+Substituting $j_0=0$, $\eta=0$ into \eqref{eq:B1} gives $W^*(0)=-3$, $H^*(0)=0$, hence
+$\eta_0=0$\lnos{9004--9008}.
+\ORIG
+$\Pi_0$ is even\lnos{8998--9000}. The dichotomy \eqref{eq:B2} \lnos{9014--9019}:
+\begin{equation}
+\label{eq:B2}
+\begin{gathered}
+\text{first choose }\delta_*>0\text{ so that }\{|Z^*|\le\delta_*\}\text{ avoids a neighborhood of }\eta_0,\\
+\text{then choose }\sigma_*\text{ so that }\chi>.99\text{ on }\{|Z^*|\le\delta_*\}.
+\end{gathered}
+\end{equation}
+The amplitude $C$ is chosen after $\Lambda$\lnos{9037--9038,9215--9218};
+Lemma~B.4 of [S] ``first $\Lambda$, then $C$, sufficiently large''\lnos{9383};
+\S B.7 of [S]: increasing $C$ moves $X_R$ outward without lengthening the transition\lnos{9580--9586}.
+The absence of an upper bound is thus pinned.
+Azimuthal data \lnos{9027--9036}:
+\begin{equation}
+\label{eq:B3}
+\zeta^*=-\frac{L H^*}{H^{*2}+\sigma_*^2},\qquad
+\xi_0=\Lambda\zeta^*,\qquad
+\varphi^*=\exp\Bigl(\Lambda\int_0^\eta\zeta^*(w)\,dw\Bigr).
+\end{equation}
+Parameter order \lnos{9778--9779}:
+\begin{equation}
+\label{eq:B40}
+\begin{gathered}
+M_d,T_d,P_*,\lambda,h
+\;\to\;
+\text{matching tolerance},\; j_0
+\;\to\;
+\delta_*,\sigma_*,\Lambda\\
+\;\to\;
+(B_k),T_{\mathrm{sh}}
+\;\to\;
+C,X_R
+\;\to\;
+\kappa_0,t_1,\text{final widths}.
+\end{gathered}
+\end{equation}
+
+\ORIG
+Endpoint test of Prop.~B.3 of [S] \lnos{9281--9285,9353}: at $X_0=4/\Lambda$ there is a fixed
+$c_{\mathrm{ex}}>0$ (the proof takes $c_{\mathrm{ex}}=.2$) such that
+\begin{equation}
+\label{eq:B19}
+p_1+\frac{p_2^2}{p_1}>2+c_{\mathrm{ex}}.
+\end{equation}
+The large-$C$ mechanism requires $\chi\le .99$ and $|Z^*|>\delta_*$, hence $|n_s|\ge\delta_*/2$,
+\begin{equation}
+\label{eq:p2C}
+|p_2|=C\sqrt{\frac{2}{\Lambda}}\,\frac{|n_s|}{\varphi^*\Phi}
+\qquad\text{\lnos{9344--9349}}.
+\end{equation}
+On the complementary region $|Z^*|>\delta_*$ one has $|n_s|\ge\delta_*/2$, so this term carries $C$;
+that region does not contain $Z^*(0)=0$\lnos{9344--9352}.
+
+\subsection{Parity: \texorpdfstring{$p_2(\cdot,0)\equiv 0$}{p\_2(.,0)=0} exactly}
+\label{sec:note3-parity}
+
+\begin{proposition}[On the axis at $j_0=0$, $p_2\equiv 0$]
+\label{prop:p2zero}
+\DER
+At $j_0=0$, $U^*$ is odd and $\Pi_0$ is even\lnos{8998--9004}
+$\Rightarrow$ $Z^*$ is odd $\Rightarrow$ $Z^*(0)=0$;
+$\chi$ is even, $\varphi^*$ is even (\eqref{eq:B3}).
+The comparison profile of Prop.~B.2 of [S] $\Phi_0=f_0(Y\chi)$ is even,
+and $u_0=-YZ^*/(2L)$ is odd\lnos{9236}.
+The remainders $R_1$ is even and $R_2$ is odd (substitute each term of \lnos{9197--9199}).
+The fixed-point map \lnos{9237--9243} preserves this parity.
+The real fixed point is unique\lnos{9261}
+$\Rightarrow$ the exact solution satisfies $u(Y,0)=0$, hence $u_Y(Y,0)=0$.
+\ORIG
+$n_s=-2u_Y$\lnos{9324}, so $n_s(Y,0)=0$,
+hence $p_2(4/\Lambda,0)=0$. Thus $p_2^2/p_1=0$.
+\end{proposition}
+
+\begin{proof}[Argument sketch]
+Check the parity of each term of \lnos{9197--9199} under $\eta\mapsto-\eta$;
+the map \lnos{9237--9243} preserves the class; uniqueness\lnos{9261} forces the exact solution into
+that class.
+\ORIG ``Real data and uniqueness of the fixed point give a real solution'' is the statement of
+\lnos{9261}; this note quotes it as is and does not isolate it as a separate lemma; the full term-by-term
+parity verification is not written out.
+\notproved
+\end{proof}
+
+\begin{remark}[A forbidden generic claim]
+\DER
+One must not write $p_2^2/p_1\asymp C^2\Lambda^{-1}$ at $\eta=0$:
+that asymptotics applies only on the complementary region $|n_s|\ge\delta_*/2$\lnos{9344--9352},
+which does not contain $Z^*(0)=0$. The missing step is the jump from \eqref{eq:p2C} to
+$|n_s|=\Theta(1)$.
+Even without parity, citing only (B.13)\lnos{9172--9182} via (B.18)\lnos{9278},
+at $\eta=0$ one has $n_s=O(\Lambda^{-1})$ and $p_1=O(\Lambda^{-1})$
+(\lnos{9325--9326}: the upper bound for $p_1$ and the approximation for $n_s$ follow from these), so
+$p_2\asymp C\Lambda^{-3/2}$, $p_2^2/p_1\asymp C^2\Lambda^{-2}$, still not $\Lambda^{-1}$.
+\end{remark}
+
+\subsection{\texorpdfstring{$p_1=2(3-h)/\Lambda$}{p\_1=2(3-h)/Lambda} and the degeneration of (B.19)}
+\label{sec:note3-p1}
+
+\begin{proposition}[On-axis $R_1^{(0)}$ and $\partial_Y\Phi_1$]
+\label{prop:Phi1}
+\DER
+At $j_0=0$: $\chi(0)=H^*(0)=\zeta^*(0)=Z^*(0)=0$, $u_0(Y,0)=0$,
+$\Phi_0(Y,0)=f_0(0)=1$\lnos{9150--9160}.
+$L(0)=1$, $W^*(0)=-3$\lnos{9005,9008}, so
+\begin{equation}
+\label{eq:R10}
+R_1^{(0)}(Y,0)=W^*(0)+h=-3+h,
+\end{equation}
+independent of $\sigma_*,\delta_*,Y$.
+At $\eta=0$, $T=J_2\chi/2=0$, so
+$2\bigl(Y(\Phi_1)_{YY}+2(\Phi_1)_Y\bigr)=h-3$.
+Smoothness at $Y=0$ excludes the $Y^{-2}$ homogeneous solution, giving
+\begin{equation}
+\label{eq:Phi1Y}
+\partial_Y\Phi_1(4,0)=\frac{h-3}{4}<0
+\qquad\bigl(0<h\le 10^{-2},\ \text{\lnos{9002,1344--1347}}\bigr).
+\end{equation}
+The remainder $O(\Lambda^{-2})$ does not change the sign for $\Lambda$ large.
+\end{proposition}
+
+\begin{proof}[Argument sketch]
+The fixed-point expansion $\Phi=\Phi_0+\Lambda^{-1}\Phi_1+O(\Lambda^{-2})$ comes from the same
+contraction map \lnos{9237--9247}, not from an external fit.
+Cross-check: on the axis $S_q=-W-h=3-h$\lnos{1464}, consistent with $R_1=h-3$.
+ODE: $Yv'+2v=(h-3)/2$ with $v(0)$ finite $\Rightarrow$ $v\equiv(h-3)/4$.
+The consistency estimate of the expansion remainder is not written out.
+\notproved
+\end{proof}
+
+\begin{proposition}[$p_1(4/\Lambda,0)$]
+\label{prop:p1}
+\ORIG
+$p_1=a=-2Y\Phi_Y/\Phi$\lnos{9324}.
+\DER
+$\Phi_Y(Y,0)=\Lambda^{-1}(h-3)/4+O(\Lambda^{-2})$,
+$\Phi(Y,0)=1+O(\Lambda^{-1})$, so
+\begin{equation}
+\label{eq:p1}
+p_1\Bigl(\frac{4}{\Lambda},0\Bigr)
+=\frac{2(3-h)}{\Lambda}+O(\Lambda^{-2})>0
+\qquad(\Lambda\text{ sufficiently large}).
+\end{equation}
+Cross-check: on the axis $Q_s(0)=S_q(0)/2$\lnos{1487}, $S_q(0)\approx 3-h$,
+$p_1=XQ_s/L\approx(4/\Lambda)(3-h)/2=2(3-h)/\Lambda$.
+\end{proposition}
+
+\begin{proposition}[(B.19) degenerates at $\eta=0$]
+\label{prop:B19deg}
+\DER
+By Prop.~\ref{prop:p2zero}, $p_2(\cdot,0)\equiv 0$, so $C$ does not enter \eqref{eq:B19}.
+\eqref{eq:B19} degenerates to
+\begin{equation}
+\label{eq:B19deg}
+p_1>2+c_{\mathrm{ex}}=2.2.
+\end{equation}
+By \eqref{eq:p1}, $p_1=2(3-h)/\Lambda\not>2.2$ ($\Lambda$ large).
+The large $C$ multiplies $p_2$\lnos{9346--9349} and is ineffective against $p_2=0$.
+\end{proposition}
+
+\begin{claim}[The two cones are separate]
+\label{cl:two-cones}
+\DER
+First cone inequality $a-b_s w>0$:
+$b_s=2D_X U/E$\lnos{1494--1496} vanishes at $\eta=0$ ($U$ odd), $a=p_1>0$,
+\emph{so this item passes}.
+What fails is the second cone test $v_s=p_1+p_2^2/p_1>2$.
+The two must not be conflated into one ``cone''.
+The literal conditions $p_1>0$ / $\partial_Y\Phi_1<0$ pass, and hold for all $\sigma_*,\delta_*$;
+they are not a necessary and sufficient condition for large $C$ to rescue \eqref{eq:B19}
+(one still needs $n_s\neq 0$).
+\end{claim}
+
+\begin{remark}[The quantifiers of (B.2)]
+\ORIG
+The quantifiers of (B.2): first choose $\delta_*>0$ so that $\{|Z^*|\le\delta_*\}$ avoids a
+neighborhood of $\eta_0$, then choose $\sigma_*$ so that $\chi>.99$\lnos{9014--9019}.
+\DER
+Substituting $j_0=0$ (an external limit point; the source allows only $0<j_0\le.05$\lnos{9002}):
+$\eta_0=0$ and $Z^*(0)=0$ (\lnos{9004--9008} at $\eta=0$),
+so for every $\delta_*>0$ the point $\eta=0$ lies both in $\{|Z^*|\le\delta_*\}$ and in any
+neighborhood of $\eta_0$.
+\eqref{eq:B2} has no solution under the quantifiers of this dichotomy. This is not a choice problem
+repairable by making $\sigma_*,\delta_*$ smaller/larger.
+This statement stays at level L0 (this dichotomy fails at the external limit point $j_0=0$,
+see Claim~\ref{cl:L0}) and is not extended to an existence statement under other dichotomies.
+\end{remark}
+
+\subsection{The L0 conclusion and the in-class rigidity}
+\label{sec:note3-L0}
+
+\begin{claim}[L0 (the device extended to the external limit point $j_0=0$)]
+\label{cl:L0}
+\DER
+$j_0=0$ lies outside the source's domain (the source allows only $0<j_0\le.05$\lnos{9002}; this note
+extends the device to that external limit point): the unique real fixed point lies on the
+$\eta\mapsto-\eta$ symmetry, so $p_2(\cdot,0)\equiv 0$ and $b_s(\cdot,0)=0$;
+\eqref{eq:B19} degenerates at $\eta=0$ to $p_1>2.2$, while $p_1=2(3-h)/\Lambda\to 0$.
+Hence the endpoint test \eqref{eq:B19} of Prop.~B.3 of [S] fails at that extended point.
+This is L0: ``the device fails when extended to $j_0=0$'';
+the nonexistence of a $j_0=0$ variant within one class (Prop.~\ref{prop:L1}) is L1,
+and this note does not claim that the source itself fails at some step with $j_0>0$.
+\end{claim}
+
+\paragraph{The necessity at $X_0$.}
+\ORIG
+Lemma~B.4 of [S] requires $v_r>2+c$ on the whole interval $[X_0,X_i]$\lnos{9383--9389};
+at $\eta=0$, $v_r=p_{1,r}$.
+The analytic axis region extends only to $Y\le 4.1$, i.e.\ $X\le 4.1/\Lambda\to 0$\lnos{9166--9167,9366}.
+The first collar, where $v_s>2$, is produced by continuity from $v_r(0)>2+c$\lnos{9503--9506}.
+\DER
+The following proposition records ruling (i): L1 (no $j_0=0$ variant within the class), not L2.
+
+\begin{proposition}[In-class rigidity (L1)]
+\label{prop:L1}
+Assume the axis device satisfies the following class definition (H1)--(H3):
+\begin{itemize}
+\item[(H1)] The axis-data class of Appendix~B of [S] ((B.1)--(B.3), \lnos{9003--9036},
+$U^*=4\eta+j_0$), the analytic axis profile defined on $0\le Y=\Lambda X\le 4.1$\lnos{9166--9167},
+with vanishing leading residual stress on the axis region ($T_0=0$, \lnos{1904--1905,2111}).
+\item[(H2)] Stress activated at $X_0=4/\Lambda$: the statement of Prop.~B.5 of [S] (\lnos{9462--9464},
+continued to $X_i$ with $X\le X_0$ unchanged), (B.26) (\lnos{9476--9479}, the prescription on
+$0<y<t_1$), and $B_0(0,\eta)\ne 0$ (\lnos{9523--9524}).
+\item[(H3)] The same cone test: \eqref{eq:B19} of Prop.~B.3 of [S] (\lnos{9281--9285},
+$p_1+p_2^2/p_1>2+c_{\mathrm{ex}}$) and the $v_r>2+c$ of Lemma~B.4 of [S] on
+$[X_0,X_i]\times[-1,1]$ (\lnos{9384--9389}), with the first collar given by the continuity of
+\lnos{9505--9506}, uniformly in $\eta$.
+\end{itemize}
+\DER
+Then $j_0=0$ fails the cone test within this class. Concretely, at $(X,\eta)=(4/\Lambda,0)$:
+\begin{enumerate}
+\item At $j_0=0$, $U^*$ is odd and $\Pi_0$ is even\lnos{8998--9004} $\Rightarrow$ $Z^*$ odd,
+$\chi,\varphi^*$ even, the comparison profile $\Phi_0=f_0(Y\chi)$ even, $u_0=-YZ^*/(2L)$ odd\lnos{9236};
+the remainders $R_1$ even and $R_2$ odd\lnos{9197--9199}; the fixed-point map\lnos{9237--9243}
+preserves this parity; the real fixed point is unique\lnos{9261} $\Rightarrow$ the exact solution has
+$u(Y,0)\equiv 0$
+$\Rightarrow$ $n_s=-2u_Y=0$\lnos{9324} $\Rightarrow$ $p_2(4/\Lambda,0)=0$
+(\lnos{9277,9346--9349}).
+\item $R_1^{\mathrm{lead}}(Y,0)=W^*(0)+h=-3+h$ (\lnos{9005,9008} at
+$j_0=0,\eta=0$; the $LR_1$ of (B.14) evaluated at $\eta=0$\lnos{9197}; $L(0)=d(0)=1$), independent of
+$\sigma_*,\delta_*,Y$; the axis-regular solution of the slice ODE
+$Yv'+2v=(h-3)/2$ gives $\partial_Y\Phi_1(4,0)=(h-3)/4<0$;
+hence by Prop.~\ref{prop:p1}, $p_1(4/\Lambda,0)=2(3-h)/\Lambda+O(\Lambda^{-2})\to 0$
+(cross-check: the $Q_s(0)=S_q(0)/2$ of \lnos{1487} and the $S_q=-W-h=3-h$ of \lnos{1464}).
+\item Hence \eqref{eq:B19} degenerates at $\eta=0$ to $p_1>2.2$ and fails (Prop.~\ref{prop:B19deg}).
+The first cone inequality $a-b_sw>0$ passes ($b_s=2D_XU/E$ vanishes at $\eta=0$, \lnos{1494--1496});
+what dies is the second cone test $v_s>2$ (Claim~\ref{cl:two-cones}).
+\end{enumerate}
+\end{proposition}
+
+\paragraph{Evidence for the negative statement (``must start at $X_0$'').}
+\ORIG
+\begin{enumerate}
+\item Prop.~B.5 of [S] \lnos{9499--9500}: for $t_1$ sufficiently small, $P_c>2+c$; by (B.29)
+(\lnos{9494--9498}), $P_c=v_r+O(ye_a)$, so at $y=0$, $v_r(X_0,\eta)>2+c$. Shrinking $t_1$ only
+shrinks the error term and cannot raise the endpoint where $v_r(0)<2$.
+\item Prop.~B.5 of [S] \lnos{9505--9506}: ``Continuity from $v_r(0)>2+c$ gives one positive-width
+first collar on which $v_s>2+c/2$, uniformly in $\eta$'' --- this is the only sentence in the whole
+source that names $v_r>2+c$ at $y=0$. (B.26) (\lnos{9476--9479}) \emph{does not} use $v_r>2+c$.
+\end{enumerate}
+
+\paragraph{Where the chain breaks, and downstream uses.}
+\DER
+If the endpoint lower bound is deleted, then at $\eta=0$: the $\eta$-uniform $v_s>2$ of the first
+collar cannot start (the quantifier of \lnos{9505--9506}) $\to$ the near-endpoint $P_c>2$ fails $\to$
+both the admissible and the relaxed branches fail simultaneously (both branches of the dichotomy of
+\lnos{9503--9505} break) $\to$ while $T_0$ is already nonzero at $X_0+$ (\lnos{9523--9524}) $\to$
+Cor.~B.6 of [S] (\lnos{9563--9564}). This is the load-bearing chain.
+Downstream uses (links in the full existence theorem, \emph{not} independent steps of this proposition):
+Prop.~4.10(ii) of [S] (\lnos{2112--2129}), Appendix~C of [S] (\lnos{9809--9811}),
+Theorem~4.6(iii) of [S] (\lnos{1908--1909}).
+
+\paragraph{Exclusion of candidate gaps.}
+\ORIG
+\begin{itemize}
+\item The $v_s\le 2$ branch of \lnos{9503--9505} still requires $P_c>2$;
+\item the $v_s<1$ of \lnos{9538--9544}: its onset is after the first collar, still on the scale
+$Y=O(1)$, and the branch follows the reference extension to $X_b$ (and on to $X_i$, \lnos{9366,9540});
+\item the vacuum region $T_0=0$ ends exactly at $X_0$ (\lnos{1904--1905,2111});
+\item the $4e^{t_c}<4.1$ of Cor.~B.6 of [S] (\lnos{9558}) locks the first collar within the analytic
+axis scale, so it cannot be moved out to $X\asymp 1$.
+\end{itemize}
+\emph{Scope: this proposition is L1 (no $j_0=0$ variant within one function class; $j_0=0$ is an
+external limit point outside the source's domain, the source allowing only $0<j_0\le.05$\lnos{9002}),
+valid only within the class (H1)--(H3); it is not L2 (it does not concern ``nonexistence of
+reflection-symmetric forced blowup''). Outward statements use L0 only.}
+
+\begin{remark}[No assertion outside the class]
+\label{rem:outside}
+\ORIG
+This proposition covers only the class (H1)--(H3), and makes no assertion outside it. Class-external
+modifications may change the conclusion, e.g.:
+dropping ``the axis profile is unchanged for $X\le X_0$''\lnos{9460--9461} or ``$T_0=0$ on the axis
+region''\lnos{1904--1905,2111};
+moving the activation point from $X_0$ into the interior of $(X_0,X_i]$ --- Prop.~B.5 of [S] pins only
+the strict relaxed cone on the rest of $(X_0,X_i]$\lnos{9461--9464}, and this proposition does not rule
+out other activation geometries (the $B_0(0,\eta)\ne0$ of (H2), \lnos{9523--9524}, is precisely the anchor
+that pins the activation point);
+or changing the cone test. For all such class-external cases this proposition is silent; this is exactly
+why it is not written as L2.
+\end{remark}
+
+\begin{remark}[Matching window: a single-point check, not a conclusion of this note]
+\label{rem:window}
+\DER
+At the single point $(4/\Lambda,0)$: $H^*(0)=j_0$, $Z^*(0)=-(\tfrac92+h)j_0$ exactly\lnos{9003--9005};
+$p_2=-C\sqrt{2/\Lambda}(\tfrac92+h)j_0\,(1+\cdots)$\lnos{9346--9349};
+$p_1=2(3-h)/\Lambda+2\chi(0)+\cdots$ (\lnos{9324} together with the $S_q$ and $\chi$ terms
+\lnos{1487,9008,9299});
+hence $p_2^2/p_1=C^2k^2j_0^2/[(3-h)+\Lambda\chi(0)]$, and when $\chi$ is subdominant the $\Lambda$
+cancels.
+\HYP
+Regime $j_0=o(\sigma_*)$: $\sigma_*$ keeps a positive lower bound independent of $j_0$ --- the source
+lines 9014--9015 and 9020--9023 state only ``$\sigma_*$ may be taken sufficiently small'' and ``$\Omega$
+exists'', and do not state that the holomorphic-neighborhood width does not collapse as $j_0\to 0$; this
+positive lower bound is an additional hypothesis with no source basis.
+\HYP
+The main case additionally requires $C^2\gg\Lambda/\sigma_*^2$ (the $\chi$ term does not dominate $p_1$)
+--- likewise an additional hypothesis with no source basis: the source lines 9014--9015, 9020--9023 state
+only that $\sigma_*$ may be taken sufficiently small and that $\Omega$ exists.
+\DER
+The lower bound for $p_2^2/p_1>2.3$ is $\Theta(1/C)$ (the coarse bound $p_1\le C_1$ loses the
+$\Lambda^{-1}$ gain at this point --- that upper bound is true in itself; using it to estimate the ratio
+only yields the overly strong $\sqrt{\Lambda}/C$).
+The matching bound\lnos{2210--2213}:
+$\|G_i-4\eta\|_{C^k}\le C_kj_0+C^{\mathrm{nat}}_k/\Lambda+\cdots$;
+requiring this bound to be smaller than $\varepsilon_m$\lnos{2190} gives an upper bound on $j_0$ of order
+$\Theta(1/C_k)$.
+\ORIG
+$C$ has no upper bound: (B.16) (\lnos{9215--9218}) gives only a lower bound; $C$ may continue to
+increase (\lnos{9350--9352,9583--9585}).
+\DER
+Hence the $\Theta(1/C)$ lower bound ``barely bites'': increasing $C$ can push the lower bound
+arbitrarily small; the only point where the test truly collapses is the exact value $j_0=0$
+(the parity mechanism of Prop.~\ref{prop:L1}).
+Ruling (a conclusion of this note): merely ``the matching upper bound and the \emph{single-point} cone
+test do not conflict under the parameter order of \eqref{eq:B40} (freeze $j_0$ first, then choose
+$\delta_*,\sigma_*,\Lambda,C$)''.
+We do not write: a quantitative window theorem; nor ``any $j_0>0$ is rescued by large $C$''
+(the $\eta$-neighborhood, the worst point of the (B.2) complementary region, and the whole interval
+$[X_0,X_i]$ of Lemma~B.4 of [S] are not covered).
+\notproved
+\end{remark}
+
+%% =====================================================================
+\section{Acknowledgments and statement}
+\label{sec:ack}
+
+\paragraph{Acknowledgments.}
+The author (Kaiyan Ren) is an M.Sc. student in the Department of Computer Science and Engineering,
+School of Engineering, The Hong Kong University of Science and Technology, and was formerly an
+undergraduate in the School of Mathematics, Nanjing University.
+Gratitude is due to several independent review sessions for their line-by-line scrutiny of the line
+anchors, the color-code and the scope boundaries: every \ORIG statement of this note was, on that
+account, re-checked verbatim against the extracted text, and several wordings and anchors were corrected.
+The review records themselves do not constitute evidence for this note; the only evidence is the source
+line numbers.
+
+\paragraph{Statement on the use of artificial-intelligence tools.}
+This note was written with the assistance of generative-AI tools: DeepSeek (line-number extraction,
+formula rewriting, parity computations and the orchestration of the review rounds), Claude (independent
+review and the packaging of the release draft), ChatGPT (earlier finite-dimensional notes and material
+preparation). These tools are not authors of this note. All assertions are anchored to line numbers of
+the reference text extraction \nolinkurl{navier-stokes.txt} identified in \S\ref{sec:intro}; the reader
+should check them line by line, and tool output is not evidence. The author takes full responsibility for the entire content of this note,
+including line-number and scope errors.
+
+\paragraph{Scope and disclaimer.}
+This note records three structural observations; it is not a completed mathematical paper and has not
+been peer-reviewed.
+Prop.~\ref{prop:osc}--\ref{prop:V}, \ref{prop:shell}--\ref{prop:rigid},
+\ref{prop:p2zero}--\ref{prop:B19deg} give only argument sketches, each explicitly marked as not
+constituting a complete proof; steps tagged \HYP are unproven.
+The in-class rigidity Prop.~\ref{prop:L1} and the single-point check Rem.~\ref{rem:window} are valid only
+within the class definition (H1)--(H3) and the stated single-point check, respectively.
+This note passes no judgment on the correctness of the source construction: the whole text reads the
+source under the hypothesis ``the construction is correct as claimed'', and the L0 statement concerns
+only the extension of the device to $j_0=0$ (an external limit point outside the source's domain).
+\textbf{No new Navier--Stokes solution is claimed}, no new regularity criterion is claimed, the existence
+or nonexistence of reflection-symmetric forced blowup is not claimed, and the finite-dimensional
+five-moment observation or the shell representation of the terminal force $F_0$ is not promoted to a
+uniqueness theorem for the full construction.
+
+%% =====================================================================
+\begin{thebibliography}{9}
+\bibitem{source}
+OpenAI,
+\textit{Finite Time Blowup for Navier--Stokes}
+(these words are the title line of the extraction, \lnos{2--3}; abstract at \lnos{4--6},
+Theorem~1.1 of the source at \lnos{28--37}),
+made public September 8, 2026.
+Announcement and full-text entry: \mbox{\url{https://openai.com/index/navier-stokes-solution/}}.
+(As of the finalization of this note the paper is not on arXiv, so it is cited via its official
+publication page, without an arXiv number.)
+All line numbers of this note refer to the reference text extraction \texttt{navier-stokes.txt} of that
+PDF (10264 lines; fingerprint and availability in the reproducibility paragraph of \S\ref{sec:intro}).
+
+\bibitem{lean}
+OpenAI,
+\textit{Lean certificates accompanying Navier--Stokes and Euler results},
+GitHub repository \mbox{\url{https://github.com/openai/NavierStokesAndEuler}},
+fixed commit \texttt{8937a8f4cbc7abaab5e9e97d1cc7f5d2319d9538}
+(this note does not cite the Lean proofs).
+\end{thebibliography}
+
+\end{document}

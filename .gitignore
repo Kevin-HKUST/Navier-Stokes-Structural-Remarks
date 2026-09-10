@@ -1,0 +1,14 @@
+# Never publish the full-text extraction of the source paper (copyright).
+navier-stokes.txt
+*.txt
+
+# LaTeX build artefacts
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
